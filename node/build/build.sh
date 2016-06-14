@@ -49,7 +49,34 @@ lint_and_test ()
     eval $npm_command
 }
 
+create_test_device()
+{
+    export IOTHUB_X509_DEVICE_ID=x509device-node-$RANDOM
+    pushd $node_root/build
+    node $node_root/build/tools/create_device_certs.js --connectionString $IOTHUB_CONNECTION_STRING --deviceId $IOTHUB_X509_DEVICE_ID
+    popd
+    export IOTHUB_X509_CERTIFICATE=$node_root/build/$IOTHUB_X509_DEVICE_ID-cert.pem
+    export IOTHUB_X509_KEY=$node_root/build/$IOTHUB_X509_DEVICE_ID-key.pem
+}
+
+delete_test_device()
+{
+    node $node_root/../iothub-explorer/iothub-explorer.js $IOTHUB_CONNECTION_STRING delete $IOTHUB_X509_DEVICE_ID
+    rm $IOTHUB_X509_CERTIFICATE
+    rm $IOTHUB_X509_KEY
+}
+
+cleanup_and_exit()
+{
+    delete_test_device
+    exit $1
+}
+
 process_args $*
+
+echo ""
+echo "-- create test device --"
+create_test_device
 
 echo ""
 if [ $integration_tests -eq 0 ]
@@ -61,35 +88,35 @@ fi
 echo ""
 
 lint_and_test $node_root/common/core
-[ $? -eq 0 ] || exit $?
+[ $? -eq 0 ] || cleanup_and_exit $?
 
 lint_and_test $node_root/common/transport/amqp
-[ $? -eq 0 ] || exit $?
+[ $? -eq 0 ] || cleanup_and_exit $?
 
 lint_and_test $node_root/common/transport/http
-[ $? -eq 0 ] || exit $?
+[ $? -eq 0 ] || cleanup_and_exit $?
 
 lint_and_test $node_root/common/transport/mqtt
-[ $? -eq 0 ] || exit $?
+[ $? -eq 0 ] || cleanup_and_exit $?
 
 lint_and_test $node_root/device/core
-[ $? -eq 0 ] || exit $?
+[ $? -eq 0 ] || cleanup_and_exit $?
 
 lint_and_test $node_root/device/transport/amqp
-[ $? -eq 0 ] || exit $?
+[ $? -eq 0 ] || cleanup_and_exit $?
 
 lint_and_test $node_root/device/transport/amqp-ws
-[ $? -eq 0 ] || exit $?
+[ $? -eq 0 ] || cleanup_and_exit $?
 
 lint_and_test $node_root/device/transport/http
-[ $? -eq 0 ] || exit $?
+[ $? -eq 0 ] || cleanup_and_exit $?
 
 lint_and_test $node_root/device/transport/mqtt
-[ $? -eq 0 ] || exit $?
+[ $? -eq 0 ] || cleanup_and_exit $?
 
 lint_and_test $node_root/service
-[ $? -eq 0 ] || exit $?
+[ $? -eq 0 ] || cleanup_and_exit $?
 
 cd $node_root/../tools/iothub-explorer
 npm -s test
-[ $? -eq 0 ] || exit $?
+[ $? -eq 0 ] || cleanup_and_exit $?
