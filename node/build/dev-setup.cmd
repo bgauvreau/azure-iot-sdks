@@ -101,7 +101,7 @@ call npm link azure-iot-common
 call npm link azure-iothub
 call npm install
 
-cd %node-root$%\build
+cd %node-root$%\build\tools
 echo .
 echo -- Setting up links for build tools --
 call npm link azure-iothub
