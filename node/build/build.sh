@@ -52,11 +52,9 @@ lint_and_test ()
 create_test_device()
 {
     export IOTHUB_X509_DEVICE_ID=x509device-node-$RANDOM
-    pushd $node_root/build
     node $node_root/build/tools/create_device_certs.js --connectionString $IOTHUB_CONNECTION_STRING --deviceId $IOTHUB_X509_DEVICE_ID
-    popd
-    export IOTHUB_X509_CERTIFICATE=$node_root/build/$IOTHUB_X509_DEVICE_ID-cert.pem
-    export IOTHUB_X509_KEY=$node_root/build/$IOTHUB_X509_DEVICE_ID-key.pem
+    export IOTHUB_X509_CERTIFICATE=$node_root/$IOTHUB_X509_DEVICE_ID-cert.pem
+    export IOTHUB_X509_KEY=$node_root/$IOTHUB_X509_DEVICE_ID-key.pem
 }
 
 delete_test_device()
