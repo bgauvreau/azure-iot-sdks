@@ -45,8 +45,8 @@ rem -- create x509 test device
 rem ---------------------------------------------------------------------------
 set IOTHUB_X509_DEVICE_ID=x509device-node-%RANDOM%
 call node %node-root%\build\tools\create_device_certs.js --connectionString %IOTHUB_CONNECTION_STRING% --deviceId %IOTHUB_X509_DEVICE_ID%
-set IOTHUB_X509_CERTIFICATE=%node-root%\build\%IOTHUB_X509_DEVICE_ID%-cert.pem
-set IOTHUB_X509_KEY=%node-root%\build\%IOTHUB_X509_DEVICE_ID%-key.pem
+set IOTHUB_X509_CERTIFICATE=%node-root%\%IOTHUB_X509_DEVICE_ID%-cert.pem
+set IOTHUB_X509_KEY=%node-root%\%IOTHUB_X509_DEVICE_ID%-key.pem
 
 rem ---------------------------------------------------------------------------
 rem -- lint and run tests
